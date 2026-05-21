@@ -94,20 +94,27 @@ The GitHub Actions rules detect:
 - Use of `curl | bash` inside workflow steps
 - Printing secrets into CI logs
 
-## Installation
+## Quick Reproduction Steps
 
-This security tool requires Semgrep.
+To reproduce the results from this security tool, run the following commands.
 
-### Option 1: Install Semgrep with pipx
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/88MARK08/semgrep-docker-ci-security-rules.git
+cd semgrep-docker-ci-security-rules
+```
+
+### 2. Install Semgrep
+
+Recommended method:
 
 ```bash
 pipx install semgrep
 semgrep --version
 ```
 
-### Option 2: Install Semgrep in a Python Virtual Environment
-
-Use this option if `pipx` fails or if you prefer a local installation.
+If `pipx` does not work, use a Python virtual environment:
 
 ```bash
 python3 -m venv semgrep-env
@@ -117,36 +124,48 @@ python -m pip install semgrep --prefer-binary --default-timeout=120 --retries=10
 semgrep --version
 ```
 
-After installation, activate the environment whenever you return to the repository:
+If you use the virtual environment method, activate it whenever you return to the repository:
 
 ```bash
 source semgrep-env/bin/activate
 ```
 
-## Usage
-
-Run all rules:
+### 3. Run the security rules
 
 ```bash
 semgrep scan --config rules/ examples/ --no-git-ignore
 ```
 
-Save JSON output:
+### 4. Expected result
+
+The scan should run 11 custom rules against 4 example files and produce 9 findings:
+
+```text
+Scanning 4 files with 11 Code rules
+9 Code Findings
+Targets scanned: 4
+Ran 11 rules on 4 files: 9 findings
+```
+
+The expected findings are:
+
+```text
+bad.Dockerfile      -> 4 findings
+bad-workflow.yml    -> 5 findings
+good.Dockerfile     -> 0 findings
+good-workflow.yml   -> 0 findings
+```
+
+### 5. Generate JSON output
 
 ```bash
 semgrep scan --config rules/ examples/ --no-git-ignore --json --output results/full-results.json
 ```
 
-Run only Dockerfile rules:
+To view the JSON result:
 
 ```bash
-semgrep scan --config rules/dockerfile-security.yml examples/ --no-git-ignore
-```
-
-Run only GitHub Actions rules:
-
-```bash
-semgrep scan --config rules/github-actions-security.yml examples/ --no-git-ignore
+cat results/full-results.json
 ```
 
 ## Evaluation
@@ -160,25 +179,7 @@ The ruleset was tested on four example files:
 
 The bad examples intentionally contain insecure patterns, while the good examples follow safer practices.
 
-## Results
-
-The full scan produced the following result:
-
-```text
-Scanning 4 files with 11 Code rules
-9 Code Findings
-Targets scanned: 4
-Ran 11 rules on 4 files: 9 findings
-```
-
-The findings were:
-
-- 4 findings in `bad.Dockerfile`
-- 5 findings in `bad-workflow.yml`
-- 0 findings in `good.Dockerfile`
-- 0 findings in `good-workflow.yml`
-
-This shows that the custom rules detected the intentionally insecure examples while avoiding findings in the safer examples.
+The tool correctly produced findings for the insecure examples and produced no findings for the safer examples.
 
 ## Sample Findings
 
@@ -220,21 +221,6 @@ Possible future improvements include:
 - Adding SARIF output for code scanning platforms
 - Adding a GitHub Actions workflow to run the rules automatically
 - Comparing results with Hadolint and Trivy
-
-## Reproducibility
-
-To reproduce the tool results:
-
-```bash
-source semgrep-env/bin/activate
-semgrep scan --config rules/ examples/ --no-git-ignore
-```
-
-To regenerate the JSON results:
-
-```bash
-semgrep scan --config rules/ examples/ --no-git-ignore --json --output results/full-results.json
-```
 
 ## Author
 
