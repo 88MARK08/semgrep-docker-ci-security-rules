@@ -2,15 +2,15 @@
 
 ## Overview
 
-This project extends Semgrep with a lightweight custom ruleset for identifying insecure Dockerfile and GitHub Actions CI/CD patterns.
+This security tool extends Semgrep with a lightweight custom ruleset for identifying insecure Dockerfiles and GitHub Actions CI/CD patterns.
 
 The tool scans container build files and CI/CD workflow files for common security issues such as use of the `latest` Docker tag, unsafe `curl | bash` commands, copying secrets into container images, dangerous GitHub Actions triggers, overly broad workflow permissions, and unpinned GitHub Actions.
 
 ## Problem Definition
 
-Modern software projects commonly rely on Dockerfiles and CI/CD workflows. These files are often treated as configuration files, but insecure choices inside them can create real security risks.
+Modern software systems commonly rely on Dockerfiles and CI/CD workflows. These files are often treated as configuration files, but insecure choices inside them can create real security risks.
 
-This project addresses the problem of insecure container and CI/CD configuration by providing Semgrep rules that detect risky patterns early in development.
+This security tool addresses the problem of insecure container and CI/CD configuration by providing Semgrep rules that detect risky patterns early in development.
 
 ## Why This Problem Is Important
 
@@ -32,17 +32,17 @@ Detecting these issues early helps developers improve software supply-chain secu
 
 Existing tools such as Hadolint, Trivy, Docker Scout, and Semgrep already provide security scanning and linting capabilities.
 
-This project does not attempt to replace those mature tools. Instead, it extends Semgrep with a small, readable, classroom-friendly ruleset focused on Dockerfile and CI/CD security patterns.
+This security tool does not attempt to replace those mature tools. Instead, it extends Semgrep with a small, readable, classroom-friendly ruleset focused on Dockerfile and CI/CD security patterns.
 
-## Gap Filled by This Tool
+## Gap Filled by This Security Tool
 
-The main gap this project fills is educational and practical simplicity.
+The main gap filled by this security tool is educational and practical simplicity.
 
-The rules are easy to read, easy to modify, and easy to run. The project demonstrates how Semgrep can be extended with custom rules for infrastructure and software supply-chain security.
+The rules are easy to read, modify, and run. The tool demonstrates how Semgrep can be extended with custom rules for infrastructure and software supply-chain security.
 
 ## System Design
 
-The project has the following structure:
+The security tool has the following repository structure:
 
 ```text
 semgrep-docker-ci-security-rules/
@@ -59,3 +59,183 @@ semgrep-docker-ci-security-rules/
 │   └── full-results.json
 ├── README.md
 └── report.md
+```
+
+The tool works by applying Semgrep custom rules to Dockerfile and GitHub Actions workflow examples. The rules detect risky patterns and report the file, line number, rule ID, severity, and explanation.
+
+## Technology Choices
+
+This security tool uses Semgrep because it is an open-source static analysis tool that supports custom YAML rules. Semgrep is appropriate for this tool because it can scan source code and configuration files using user-defined rules.
+
+The custom rules are written in YAML and use Semgrep's generic pattern matching mode. This makes the rules suitable for scanning Dockerfiles and GitHub Actions workflow files.
+
+The tool also supports JSON output, which makes the results easier to save, review, and integrate into automated workflows.
+
+## Rules Implemented
+
+### Dockerfile Rules
+
+The Dockerfile rules detect:
+
+- Use of the `latest` tag in a base image
+- Use of `curl | bash` or `curl | sh`
+- Use of `wget | bash` or `wget | sh`
+- Copying private keys such as `id_rsa`
+- Copying `.env` files into the image
+- Using `ADD` with a remote URL
+
+### GitHub Actions Rules
+
+The GitHub Actions rules detect:
+
+- Use of `pull_request_target`
+- Use of `permissions: write-all`
+- Use of unpinned actions such as `actions/checkout@main`
+- Use of `curl | bash` inside workflow steps
+- Printing secrets into CI logs
+
+## Installation
+
+This security tool requires Semgrep.
+
+### Option 1: Install Semgrep with pipx
+
+```bash
+pipx install semgrep
+semgrep --version
+```
+
+### Option 2: Install Semgrep in a Python Virtual Environment
+
+Use this option if `pipx` fails or if you prefer a local installation.
+
+```bash
+python3 -m venv semgrep-env
+source semgrep-env/bin/activate
+python -m pip install --upgrade pip setuptools wheel --default-timeout=120 --retries=10
+python -m pip install semgrep --prefer-binary --default-timeout=120 --retries=10
+semgrep --version
+```
+
+After installation, activate the environment whenever you return to the repository:
+
+```bash
+source semgrep-env/bin/activate
+```
+
+## Usage
+
+Run all rules:
+
+```bash
+semgrep scan --config rules/ examples/ --no-git-ignore
+```
+
+Save JSON output:
+
+```bash
+semgrep scan --config rules/ examples/ --no-git-ignore --json --output results/full-results.json
+```
+
+Run only Dockerfile rules:
+
+```bash
+semgrep scan --config rules/dockerfile-security.yml examples/ --no-git-ignore
+```
+
+Run only GitHub Actions rules:
+
+```bash
+semgrep scan --config rules/github-actions-security.yml examples/ --no-git-ignore
+```
+
+## Evaluation
+
+The ruleset was tested on four example files:
+
+- `examples/bad.Dockerfile`
+- `examples/good.Dockerfile`
+- `examples/bad-workflow.yml`
+- `examples/good-workflow.yml`
+
+The bad examples intentionally contain insecure patterns, while the good examples follow safer practices.
+
+## Results
+
+The full scan produced the following result:
+
+```text
+Scanning 4 files with 11 Code rules
+9 Code Findings
+Targets scanned: 4
+Ran 11 rules on 4 files: 9 findings
+```
+
+The findings were:
+
+- 4 findings in `bad.Dockerfile`
+- 5 findings in `bad-workflow.yml`
+- 0 findings in `good.Dockerfile`
+- 0 findings in `good-workflow.yml`
+
+This shows that the custom rules detected the intentionally insecure examples while avoiding findings in the safer examples.
+
+## Sample Findings
+
+Example findings include:
+
+```text
+rules.dockerfile-latest-tag
+Avoid using the latest tag for base images. Use a specific version tag for reproducible builds.
+
+rules.dockerfile-curl-pipe-shell
+Avoid piping curl output directly into a shell.
+
+rules.github-actions-pull-request-target
+Avoid using pull_request_target unless absolutely necessary. It can expose secrets to untrusted pull request code.
+
+rules.github-actions-write-all-permissions
+Avoid permissions write-all. Use least-privilege permissions instead.
+```
+
+## Known Issues
+
+This security tool uses lightweight pattern matching. It does not fully parse Dockerfile or GitHub Actions semantics.
+
+Known limitations include:
+
+- It may miss complex multi-line patterns.
+- It may produce false positives in unusual configurations.
+- It does not scan built container images.
+- It does not check package vulnerabilities.
+- It does not replace mature tools such as Hadolint, Trivy, Docker Scout, or the full Semgrep Registry.
+
+## Future Improvements
+
+Possible future improvements include:
+
+- Adding more Dockerfile rules
+- Adding more GitHub Actions rules
+- Adding GitLab CI rules
+- Adding SARIF output for code scanning platforms
+- Adding a GitHub Actions workflow to run the rules automatically
+- Comparing results with Hadolint and Trivy
+
+## Reproducibility
+
+To reproduce the tool results:
+
+```bash
+source semgrep-env/bin/activate
+semgrep scan --config rules/ examples/ --no-git-ignore
+```
+
+To regenerate the JSON results:
+
+```bash
+semgrep scan --config rules/ examples/ --no-git-ignore --json --output results/full-results.json
+```
+
+## Author
+
+Markjoe Uba
