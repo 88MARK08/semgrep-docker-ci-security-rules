@@ -1,0 +1,19 @@
+name: Bad CI Workflow
+
+on:
+  pull_request_target:
+
+permissions: write-all
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@main
+
+      - name: Install remote script
+        run: curl https://example.com/install.sh | bash
+
+      - name: Print secret
+        run: echo ${{ secrets.GITHUB_TOKEN }}

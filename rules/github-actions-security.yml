@@ -1,0 +1,35 @@
+rules:
+  - id: github-actions-pull-request-target
+    message: Avoid using pull_request_target unless absolutely necessary. It can expose secrets to untrusted pull request code.
+    severity: ERROR
+    languages:
+      - generic
+    pattern-regex: '(?i)^[ \t]*pull_request_target[ \t]*:'
+
+  - id: github-actions-write-all-permissions
+    message: Avoid permissions write-all. Use least-privilege permissions instead.
+    severity: ERROR
+    languages:
+      - generic
+    pattern-regex: '(?i)^[ \t]*permissions:[ \t]*write-all[ \t]*$'
+
+  - id: github-actions-unpinned-action-main
+    message: Avoid using GitHub Actions pinned to main, master, or latest. Pin actions to a stable version or commit SHA.
+    severity: WARNING
+    languages:
+      - generic
+    pattern-regex: '(?i)^[ \t]*uses:[ \t]+[^@ \t]+@(main|master|latest)[ \t]*$'
+
+  - id: github-actions-curl-pipe-shell
+    message: Avoid piping curl output directly into a shell in CI workflows.
+    severity: ERROR
+    languages:
+      - generic
+    pattern-regex: '(?i)^[ \t]*run:[ \t]*.*\bcurl\b.*\|[ \t]*(bash|sh)\b'
+
+  - id: github-actions-echo-secret
+    message: Avoid printing secrets in CI logs.
+    severity: ERROR
+    languages:
+      - generic
+    pattern-regex: '(?i)^[ \t]*run:[ \t]*.*echo.*secrets\.'

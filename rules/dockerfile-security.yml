@@ -1,0 +1,42 @@
+rules:
+  - id: dockerfile-latest-tag
+    message: Avoid using the latest tag for base images. Use a specific version tag for reproducible builds.
+    severity: WARNING
+    languages:
+      - generic
+    pattern-regex: '(?i)^FROM[ \t]+\S+:latest([ \t]|$)'
+
+  - id: dockerfile-curl-pipe-shell
+    message: Avoid piping curl output directly into a shell.
+    severity: ERROR
+    languages:
+      - generic
+    pattern-regex: '(?i)^RUN[ \t]+.*\bcurl\b.*\|[ \t]*(bash|sh)\b'
+
+  - id: dockerfile-wget-pipe-shell
+    message: Avoid piping wget output directly into a shell.
+    severity: ERROR
+    languages:
+      - generic
+    pattern-regex: '(?i)^RUN[ \t]+.*\bwget\b.*\|[ \t]*(bash|sh)\b'
+
+  - id: dockerfile-copy-private-key
+    message: Possible private key copied into the container image.
+    severity: ERROR
+    languages:
+      - generic
+    pattern-regex: '(?i)^COPY[ \t]+.*id_rsa.*'
+
+  - id: dockerfile-copy-env-file
+    message: Possible .env file copied into the container image.
+    severity: ERROR
+    languages:
+      - generic
+    pattern-regex: '(?i)^COPY[ \t]+.*\.env.*'
+
+  - id: dockerfile-add-remote-url
+    message: Avoid using ADD with a remote URL. Download and verify files explicitly instead.
+    severity: WARNING
+    languages:
+      - generic
+    pattern-regex: '(?i)^ADD[ \t]+https?://.*'
