@@ -206,17 +206,6 @@ Known limitations include:
 - It does not check package vulnerabilities.
 - It does not replace mature tools such as Hadolint, Trivy, Docker Scout, or the full Semgrep Registry.
 
-## Future Improvements
-
-Possible future improvements include:
-
-- Adding more Dockerfile rules
-- Adding more GitHub Actions rules
-- Adding GitLab CI rules
-- Adding SARIF output for code scanning platforms
-- Adding a GitHub Actions workflow to run the rules automatically
-- Comparing results with Hadolint and Trivy
-
 ## Author
 
 Markjoe Uba
