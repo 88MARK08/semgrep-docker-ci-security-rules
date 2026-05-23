@@ -28,17 +28,13 @@ Examples include:
 
 Detecting these issues early helps developers improve software supply-chain security.
 
-## Existing Tools
+## Existing Tools and Gap Filled
 
-Existing tools such as Hadolint, Trivy, Docker Scout, and Semgrep already provide security scanning and linting capabilities.
+Tools such as Hadolint, Trivy, Docker Scout, and Semgrep already provide mature security scanning and linting capabilities. This tool does not attempt to replace them. Instead, it builds on Semgrep by providing a focused ruleset for selected Dockerfile and GitHub Actions risks.
 
-This security tool does not attempt to replace those mature tools. Instead, it extends Semgrep with a small, readable, classroom-friendly ruleset focused on Dockerfile and CI/CD security patterns.
+Many scanners are broad and powerful, but quick repository-level reviews sometimes need a smaller and easier-to-customize set of checks. This tool focuses on high-impact patterns such as unsafe remote script execution, copied secrets, overly broad workflow permissions, and unpinned actions.
 
-## Gap Filled by This Security Tool
-
-The main gap filled by this security tool is educational and practical simplicity.
-
-The rules are easy to read, modify, and run. The tool demonstrates how Semgrep can be extended with custom rules for infrastructure and software supply-chain security.
+Because the rules are written in readable Semgrep YAML, they can be reviewed, modified, and extended quickly. This makes the tool useful for lightweight DevSecOps checks, pre-deployment reviews, and custom supply-chain security policy enforcement.
 
 ## System Design
 
@@ -57,8 +53,7 @@ semgrep-docker-ci-security-rules/
 ├── results/
 │   ├── dockerfile-results.json
 │   └── full-results.json
-├── README.md
-└── report.md
+└── README.md
 ```
 
 The tool works by applying Semgrep custom rules to Dockerfile and GitHub Actions workflow examples. The rules detect risky patterns and report the file, line number, rule ID, severity, and explanation.
