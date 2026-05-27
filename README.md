@@ -206,6 +206,10 @@ Known limitations include:
 - It does not check package vulnerabilities.
 - It does not replace mature tools such as Hadolint, Trivy, Docker Scout, or the full Semgrep Registry.
 
+## Declaration of Generative AI Usage:
+
+During the development of this security tool, ChatGPT was used to assist with editing, grammar enhancement, and the generation of artificial or synthetic examples. All AI-assisted content was reviewed, revised, and edited by the author as needed. The author takes full responsibility for the final content, design decisions, implementation, and submission.
+
 ## Author
 
 Markjoe Uba
