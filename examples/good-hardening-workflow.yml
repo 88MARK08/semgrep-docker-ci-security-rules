@@ -1,0 +1,16 @@
+name: Good Hardening Workflow
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Use pinned Docker action
+        uses: docker://alpine:3.20
+      - name: Print static text
+        run: echo "Build started"

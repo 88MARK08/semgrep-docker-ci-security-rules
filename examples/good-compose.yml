@@ -1,0 +1,7 @@
+services:
+  app:
+    image: nginx:1.27-alpine
+    user: "101:101"
+    read_only: true
+    ports:
+      - "127.0.0.1:8080:8080"

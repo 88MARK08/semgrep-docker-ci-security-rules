@@ -1,0 +1,21 @@
+rules:
+  - id: github-actions-self-hosted-runner
+    message: Review self-hosted runner use carefully because repository workflows run on infrastructure you manage.
+    severity: WARNING
+    languages:
+      - generic
+    pattern-regex: '(?i)^[ \t]*runs-on:[ \t]*self-hosted([ \t]|$)'
+
+  - id: github-actions-untrusted-pr-context-shell
+    message: Do not pass pull-request title, body, or branch data directly into shell commands.
+    severity: ERROR
+    languages:
+      - generic
+    pattern-regex: '(?i)^[ \t]*run:[ \t]*.*\$\{\{[ \t]*github\.event\.pull_request\.(title|body|head\.ref)[ \t]*\}\}'
+
+  - id: github-actions-docker-latest
+    message: Avoid Docker-based actions using the latest tag. Pin a specific image version or digest.
+    severity: WARNING
+    languages:
+      - generic
+    pattern-regex: '(?i)^[ \t]*uses:[ \t]*docker://[^ \t]+:latest([ \t]|$)'

@@ -1,0 +1,21 @@
+rules:
+  - id: docker-compose-privileged
+    message: Avoid privileged containers. Grant only the capabilities required.
+    severity: ERROR
+    languages:
+      - generic
+    pattern-regex: '(?i)^[ \t]*privileged:[ \t]*true[ \t]*$'
+
+  - id: docker-compose-docker-socket
+    message: Avoid mounting the Docker socket into containers unless it is strictly necessary.
+    severity: ERROR
+    languages:
+      - generic
+    pattern-regex: '(?i)^.*\/var\/run\/docker\.sock:\/var\/run\/docker\.sock.*$'
+
+  - id: docker-compose-host-network
+    message: Avoid host network mode unless it is necessary and reviewed.
+    severity: WARNING
+    languages:
+      - generic
+    pattern-regex: '(?i)^[ \t]*network_mode:[ \t]*host[ \t]*$'
