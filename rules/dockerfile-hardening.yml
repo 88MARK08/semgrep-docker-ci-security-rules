@@ -1,0 +1,21 @@
+rules:
+  - id: dockerfile-user-root
+    message: Avoid running the container explicitly as root.
+    severity: ERROR
+    languages:
+      - generic
+    pattern-regex: '(?i)^USER[ \t]+root([ \t]|$)'
+
+  - id: dockerfile-chmod-777
+    message: Avoid chmod 777. Use the minimum permissions required.
+    severity: WARNING
+    languages:
+      - generic
+    pattern-regex: '(?i)^RUN[ \t]+.*\bchmod[ \t]+(-R[ \t]+)?777\b'
+
+  - id: dockerfile-apt-get-upgrade
+    message: Avoid apt-get upgrade in Dockerfiles. Pin package versions and rebuild from updated base images.
+    severity: WARNING
+    languages:
+      - generic
+    pattern-regex: '(?i)^RUN[ \t]+.*\bapt(-get)?[ \t]+upgrade\b'

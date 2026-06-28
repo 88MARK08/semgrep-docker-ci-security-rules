@@ -133,7 +133,7 @@ semgrep scan --config rules/ examples/ --no-git-ignore
 
 ### 4. Expected result
 
-The scan should run 11 custom rules against 4 example files and produce 9 findings:
+The original four examples run 11 rules and produce 9 findings. The Version 2 regression suite validates 20 rules across 10 fixtures and expects 18 findings.
 
 ```text
 Scanning 4 files with 11 Code rules
@@ -213,3 +213,56 @@ During the development of this security tool, ChatGPT was used to assist with ed
 ## Author
 
 Markjoe Uba
+
+## Version 2 Improvements
+
+This version expands the ruleset based on peer-review feedback.
+
+New coverage includes:
+
+- Explicit `USER root`, `chmod 777`, and `apt-get upgrade` in Dockerfiles
+- Self-hosted runners, untrusted pull-request context passed to shell commands, and Docker actions using `latest`
+- Docker Compose privileged containers, Docker socket mounts, and host network mode
+- Regression testing for expected findings and safe examples
+- Optional combined scans with the Semgrep Docker registry rules
+- GitHub Actions CI for rule validation and regression tests
+
+### Version 2 Validation
+
+Run:
+
+```bash
+./tests/run_regression_tests.sh
+```
+
+The regression suite validates the rules against intentionally unsafe and safer example files. It confirms that expected findings appear in unsafe examples and that safer examples do not produce findings.
+
+### Combined Scan
+
+To scan using both the Semgrep Docker registry rules and this repository's custom rules:
+
+```bash
+scripts/run_combined_scan.sh examples
+```
+
+Results are saved to:
+
+```text
+results/combined-results.json
+```
+
+View the JSON findings with:
+
+```bash
+jq -r '.results[] | "\(.check_id)\t\(.path):\(.start.line)"' \
+  results/combined-results.json
+```
+
+### Semgrep Resources
+
+- [Semgrep documentation](https://docs.semgrep.dev/)
+- [Writing Semgrep rules](https://docs.semgrep.dev/writing-rules/overview)
+- [Testing Semgrep rules](https://docs.semgrep.dev/writing-rules/testing-rules)
+- [Semgrep Registry](https://semgrep.dev/explore)
+- [Semgrep GitHub repository](https://github.com/semgrep/semgrep)
+

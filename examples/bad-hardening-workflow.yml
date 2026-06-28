@@ -1,0 +1,16 @@
+name: Bad Hardening Workflow
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: self-hosted
+    steps:
+      - name: Use latest Docker action
+        uses: docker://alpine:latest
+      - name: Print pull request title
+        run: echo "${{ github.event.pull_request.title }}"
